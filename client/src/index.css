@@ -245,11 +245,9 @@ body {
 .animate-slideDown { animation: slideDown 0.15s ease; }
 
 /* Board thumbnail hover reveals delete button */
-.board-thumbnail-wrap:hover .board-delete-btn { opacity: 1 !important; }
+.board-thumbnail:hover .board-delete-btn { opacity: 1 !important; }
 
 /* ─── CSS Containment (performance) ────────────────────────────────── */
-/* Tells the browser each list is a self-contained layout box.
-   Prevents a card re-render from triggering a full-page reflow. */
 .list-column {
   contain: layout style;
 }
@@ -265,23 +263,76 @@ body {
   pointer-events: none;
 }
 
-/* ─── Responsive Design ─────────────────────────────────────────────── */
-/* Tablet: 768px – 1024px */
+/* ─── Mobile Sidebar Drawer ──────────────────────────────────────── */
+.mobile-sidebar-drawer {
+  display: none; /* hidden on desktop */
+  position: fixed;
+  top: 50px; /* below navbar */
+  left: 0;
+  bottom: 0;
+  z-index: 45;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  width: 260px;
+}
+
+/* Desktop sidebar is always visible in flow */
+.desktop-sidebar {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ─── Navbar responsive helpers ──────────────────────────────────── */
+.nav-pills {
+  display: flex;
+  gap: 2px;
+}
+
+.nav-logo-text {
+  display: inline;
+}
+
+.nav-search {
+  display: flex;
+}
+
+/* ─── Tablet: 768px – 1024px ─────────────────────────────────────── */
 @media (max-width: 1024px) {
   .list-column {
     min-width: 240px;
     max-width: 240px;
   }
+  /* Hide extra nav pills to save space */
+  .nav-pills button:nth-child(n+3) {
+    display: none;
+  }
 }
 
-/* Mobile: < 768px */
+/* ─── Mobile: < 768px ────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  /* Navbar: hide non-essential items */
-  .nav-workspaces { display: none !important; }
+  /* ── Navbar ── */
+  .nav-pills { display: none !important; }
+  .nav-search { display: none !important; }
+  .nav-logo-text { display: none; }
+
+  /* ── Sidebar: hide desktop, show drawer ── */
+  .desktop-sidebar { display: none !important; }
+  .mobile-sidebar-drawer { display: block; }
+
+  /* ── Home page layout ── */
+  .home-main {
+    padding: 16px !important;
+  }
+
+  /* Board grids: 2 column on mobile */
+  .board-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    max-width: none !important;
+  }
 
   /* Board content: horizontal scroll with snap */
   .board-scroll {
-    padding: 12px !important;
+    padding: 10px !important;
     gap: 10px !important;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -304,15 +355,16 @@ body {
     margin: 0 !important;
   }
 
-  /* Home page: single column */
-  .home-sidebar { display: none !important; }
-  .home-main { padding: 16px !important; }
-  .board-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+  /* On touch: board delete btn is always slightly visible */
+  .board-delete-btn {
+    opacity: 0.7 !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 18px !important;
   }
 }
 
-/* Very small phones */
+/* ─── Very small phones: < 480px ─────────────────────────────────── */
 @media (max-width: 480px) {
   .board-grid {
     grid-template-columns: 1fr !important;
@@ -321,5 +373,7 @@ body {
     min-width: 88vw;
     max-width: 92vw;
   }
+  .home-main {
+    padding: 12px !important;
+  }
 }
-

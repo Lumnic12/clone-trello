@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getBoards, createBoard, deleteBoard, createList } from '../api/api';
 import { BOARD_COLORS, getPremiumBackground } from '../utils/colorHelpers';
@@ -87,7 +87,6 @@ function TemplateCard({ template, onUse }) {
 
 /* ─── Board Thumbnail ───────────────────────────────────────────────────────── */
 function BoardThumbnail({ board, onClick, onDelete }) {
-  const isGradient = board.background?.startsWith('linear-gradient');
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}>
       <div
@@ -118,18 +117,21 @@ function BoardThumbnail({ board, onClick, onDelete }) {
             }} />
           ))}
         </div>
+        {/* Delete btn — visible on hover (or always on touch devices) */}
         <button
           onClick={e => { e.stopPropagation(); onDelete(); }}
           style={{
             position: 'absolute', top: 6, right: 6,
             background: 'rgba(0,0,0,0.35)', border: 'none', color: 'white',
-            width: 24, height: 24, borderRadius: 6, cursor: 'pointer',
-            fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            opacity: 0, transition: 'opacity 0.15s',
+            width: 28, height: 28, borderRadius: 6, cursor: 'pointer',
+            fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'opacity 0.15s, background 0.15s',
           }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(220,38,38,0.7)'}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(220,38,38,0.75)'}
           onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}
           className="board-delete-btn"
+          aria-label="Delete board"
+          title="Delete board"
         >
           ×
         </button>
@@ -334,13 +336,14 @@ function CreateBoardModal({ template, onClose, onCreated }) {
 /* ═══════════════════════════════════════════════════════════════════════════════
    HOME PAGE — MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════════════════════ */
-export default function HomePage() {
+export default function HomePage({ mobileSidebarOpen = false, onSidebarClose }) {
   const [boards, setBoards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('boards'); // boards | templates
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState('All');
+  const [workspaceInfoModal, setWorkspaceInfoModal] = useState(null); // null | 'members' | 'settings'
   const navigate = useNavigate();
   const { addToast } = useToast();
 
@@ -379,83 +382,120 @@ export default function HomePage() {
 
   const WORKSPACE_NAME = 'My Workspace';
 
-  return (
-    <div style={{ display: 'flex', minHeight: 'calc(100vh - 50px)', background: 'var(--bg-primary)' }}>
+  // Close sidebar when navigating on mobile
+  function handleSidebarNavClick(tab) {
+    setActiveTab(tab);
+    if (onSidebarClose) onSidebarClose();
+  }
 
-      {/* ── LEFT SIDEBAR ─────────────────────────────────────────────────────── */}
-      <aside style={{
+  const sidebarContent = (
+    <aside
+      className="home-sidebar"
+      style={{
         width: 260, flexShrink: 0,
         background: 'var(--bg-secondary)',
         borderRight: '1px solid var(--border-primary)',
         padding: '16px 12px',
         display: 'flex', flexDirection: 'column', gap: 4,
         overflowY: 'auto',
+      }}
+    >
+      <NavItem icon="⊞" label="Boards" active={activeTab === 'boards'} onClick={() => handleSidebarNavClick('boards')} />
+      <NavItem icon="◫" label="Templates" active={activeTab === 'templates'} onClick={() => handleSidebarNavClick('templates')} />
+      <NavItem icon="⌂" label="Home" active={false} onClick={() => handleSidebarNavClick('boards')} />
+
+      <div style={{ height: 1, background: 'var(--border-primary)', margin: '12px 0 8px' }} />
+
+      {/* Workspaces */}
+      <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', padding: '0 8px', marginBottom: 4 }}>
+        Workspaces
+      </p>
+
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '6px 12px', borderRadius: 8,
+        background: 'var(--bg-hover)',
       }}>
-        <NavItem icon="⊞" label="Boards" active={activeTab === 'boards'} onClick={() => setActiveTab('boards')} />
-        <NavItem icon="◫" label="Templates" active={activeTab === 'templates'} onClick={() => setActiveTab('templates')} />
-        <NavItem icon="⌂" label="Home" active={false} onClick={() => setActiveTab('boards')} />
-
-        <div style={{ height: 1, background: 'var(--border-primary)', margin: '12px 0 8px' }} />
-
-        {/* Workspaces */}
-        <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', padding: '0 8px', marginBottom: 4 }}>
-          Workspaces
-        </p>
-
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '6px 12px', borderRadius: 8,
-          background: 'var(--bg-hover)',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: 8,
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontWeight: 700, fontSize: 14,
-            }}>
-              {WORKSPACE_NAME[0]}
-            </div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
-              {WORKSPACE_NAME}
-            </span>
-          </div>
-          <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>▾</span>
-        </div>
-
-        <div style={{ paddingLeft: 8 }}>
-          <NavItem icon="⊞" label="Boards" active={false} onClick={() => setActiveTab('boards')} />
-          <NavItem icon="👤" label="Members" active={false} onClick={() => {}} />
-          <NavItem icon="⚙" label="Settings" active={false} onClick={() => {}} />
-        </div>
-
-        <div style={{ marginTop: 'auto', paddingTop: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
+            width: 28, height: 28, borderRadius: 8,
             background: 'linear-gradient(135deg, #667eea, #764ba2)',
-            borderRadius: 10, padding: '14px 16px',
-            color: 'white',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'white', fontWeight: 700, fontSize: 14,
           }}>
-            <p style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>⚡ Go Premium</p>
-            <p style={{ fontSize: 11, opacity: 0.85, lineHeight: 1.4, marginBottom: 10 }}>
-              Unlock unlimited boards, power-ups, and more!
-            </p>
-            <button style={{
-              background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)',
-              color: 'white', borderRadius: 6, padding: '5px 12px',
-              fontSize: 12, cursor: 'pointer', fontWeight: 600, width: '100%',
-              transition: 'background 0.15s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-            >
-              Upgrade Free →
-            </button>
+            {WORKSPACE_NAME[0]}
           </div>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
+            {WORKSPACE_NAME}
+          </span>
         </div>
-      </aside>
+        <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>▾</span>
+      </div>
+
+      <div style={{ paddingLeft: 8 }}>
+        <NavItem icon="⊞" label="Boards" active={false} onClick={() => handleSidebarNavClick('boards')} />
+        <NavItem icon="👤" label="Members" active={false} onClick={() => setWorkspaceInfoModal('members')} />
+        <NavItem icon="⚙" label="Settings" active={false} onClick={() => setWorkspaceInfoModal('settings')} />
+      </div>
+
+      <div style={{ marginTop: 'auto', paddingTop: 16 }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #667eea, #764ba2)',
+          borderRadius: 10, padding: '14px 16px',
+          color: 'white',
+        }}>
+          <p style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>⚡ Go Premium</p>
+          <p style={{ fontSize: 11, opacity: 0.85, lineHeight: 1.4, marginBottom: 10 }}>
+            Unlock unlimited boards, power-ups, and more!
+          </p>
+          <button style={{
+            background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)',
+            color: 'white', borderRadius: 6, padding: '5px 12px',
+            fontSize: 12, cursor: 'pointer', fontWeight: 600, width: '100%',
+            transition: 'background 0.15s',
+          }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+          >
+            Upgrade Free →
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+
+  return (
+    <div style={{ display: 'flex', minHeight: 'calc(100vh - 50px)', background: 'var(--bg-primary)', position: 'relative' }}>
+
+      {/* ── MOBILE SIDEBAR OVERLAY ──────────────────────────────────────────── */}
+      {mobileSidebarOpen && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 40,
+            background: 'rgba(0,0,0,0.45)',
+          }}
+          onClick={onSidebarClose}
+          aria-label="Close menu"
+        />
+      )}
+
+      {/* ── MOBILE SIDEBAR DRAWER (slides in from left) ──────────────────────── */}
+      <div
+        className="mobile-sidebar-drawer"
+        style={{
+          transform: mobileSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+        }}
+      >
+        {sidebarContent}
+      </div>
+
+      {/* ── DESKTOP SIDEBAR ─────────────────────────────────────────────────── */}
+      <div className="desktop-sidebar">
+        {sidebarContent}
+      </div>
 
       {/* ── MAIN CONTENT ─────────────────────────────────────────────────────── */}
-      <main style={{ flex: 1, overflowY: 'auto', padding: '32px 40px' }}>
+      <main className="home-main" style={{ flex: 1, overflowY: 'auto', padding: '32px 40px' }}>
 
         {activeTab === 'boards' && (
           <>
@@ -507,7 +547,7 @@ export default function HomePage() {
                 <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span>🕐</span> Recently viewed
                 </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 16, maxWidth: 700 }}>
+                <div className="board-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 16, maxWidth: 700 }}>
                   {boards.slice(0, 4).map(board => (
                     <BoardThumbnail
                       key={board.id}
@@ -542,10 +582,15 @@ export default function HomePage() {
                   }}>M</div>
                   <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>My Workspace</span>
                 </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {['⊞ Boards', '👤 Members', '⚙ Settings'].map(item => (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {[
+                    { label: '⊞ Boards', action: () => setActiveTab('boards') },
+                    { label: '👤 Members', action: () => setWorkspaceInfoModal('members') },
+                    { label: '⚙ Settings', action: () => setWorkspaceInfoModal('settings') },
+                  ].map(({ label, action }) => (
                     <button
-                      key={item}
+                      key={label}
+                      onClick={action}
                       style={{
                         background: 'var(--bg-tertiary)', border: '1px solid var(--border-primary)',
                         color: 'var(--text-secondary)', borderRadius: 6,
@@ -555,7 +600,7 @@ export default function HomePage() {
                       onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-tertiary)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
                     >
-                      {item}
+                      {label}
                     </button>
                   ))}
                 </div>
@@ -569,7 +614,7 @@ export default function HomePage() {
                   ))}
                 </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 16 }}>
+                <div className="board-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 16 }}>
                   {boards.map(board => (
                     <BoardThumbnail
                       key={board.id}
@@ -730,8 +775,124 @@ export default function HomePage() {
         />
       )}
 
+      {/* Workspace Info Modal (Members / Settings) */}
+      {workspaceInfoModal && (
+        <div className="modal-backdrop" onClick={() => setWorkspaceInfoModal(null)}>
+          <div className="modal-box" style={{ width: 460, maxWidth: '95vw', padding: 0, overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{
+              padding: '16px 20px',
+              background: 'linear-gradient(135deg, #667eea, #764ba2)',
+              color: 'white',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 8,
+                  background: 'rgba(255,255,255,0.2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 18,
+                }}>
+                  {workspaceInfoModal === 'members' ? '👥' : '⚙️'}
+                </div>
+                <div>
+                  <p style={{ fontWeight: 700, fontSize: 16 }}>
+                    {workspaceInfoModal === 'members' ? 'Workspace Members' : 'Workspace Settings'}
+                  </p>
+                  <p style={{ fontSize: 12, opacity: 0.8 }}>My Workspace</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setWorkspaceInfoModal(null)}
+                style={{
+                  background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white',
+                  width: 30, height: 30, borderRadius: '50%', cursor: 'pointer', fontSize: 18,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >×</button>
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: '20px 24px' }}>
+              {workspaceInfoModal === 'members' ? (
+                <div>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
+                    Manage your workspace members and their access levels.
+                  </p>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '12px 16px', borderRadius: 10,
+                    background: 'var(--bg-tertiary)', marginBottom: 12,
+                  }}>
+                    <div style={{
+                      width: 40, height: 40, borderRadius: '50%',
+                      background: 'linear-gradient(135deg,#7B68EE,#667eea)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: 'white', fontWeight: 700, fontSize: 16, flexShrink: 0,
+                    }}>U</div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>User (You)</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>user@example.com · Admin</p>
+                    </div>
+                    <span style={{
+                      fontSize: 11, fontWeight: 600, padding: '3px 10px',
+                      background: 'var(--brand-light)', color: 'var(--brand-primary)',
+                      borderRadius: 20,
+                    }}>Admin</span>
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                    onClick={() => { addToast('Invite feature coming soon!'); }}
+                  >
+                    + Invite Members
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>
+                    Manage workspace name, visibility, and preferences.
+                  </p>
+                  {[
+                    { label: 'Workspace Name', value: 'My Workspace', icon: '🏢' },
+                    { label: 'Visibility', value: 'Private', icon: '🔒' },
+                    { label: 'Plan', value: 'Free', icon: '⚡' },
+                  ].map(item => (
+                    <div key={item.label} style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '10px 14px', borderRadius: 8,
+                      background: 'var(--bg-tertiary)',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <span style={{ fontSize: 16 }}>{item.icon}</span>
+                        <div>
+                          <p style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>{item.label}</p>
+                          <p style={{ fontSize: 14, color: 'var(--text-primary)', fontWeight: 600 }}>{item.value}</p>
+                        </div>
+                      </div>
+                      <button
+                        style={{
+                          background: 'none', border: '1px solid var(--border-primary)',
+                          color: 'var(--text-secondary)', borderRadius: 6,
+                          padding: '4px 10px', fontSize: 12, cursor: 'pointer',
+                        }}
+                        onClick={() => addToast('Settings update coming soon!')}
+                      >Edit</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         .board-thumbnail:hover .board-delete-btn { opacity: 1 !important; }
+        /* On touch devices: always show delete button slightly */
+        @media (hover: none) {
+          .board-delete-btn { opacity: 0.7 !important; }
+        }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
       `}</style>
     </div>
