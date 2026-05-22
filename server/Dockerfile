@@ -1,5 +1,8 @@
 # ── Build stage ───────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
+
+# Install OpenSSL for Prisma
+RUN apt-get update -y && apt-get install -y openssl
 
 WORKDIR /app
 
@@ -14,7 +17,10 @@ COPY . .
 RUN npx prisma generate
 
 # ── Production stage ──────────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
+
+# Install OpenSSL and wget (for healthcheck) in runner
+RUN apt-get update -y && apt-get install -y openssl wget && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
