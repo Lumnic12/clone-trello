@@ -185,7 +185,14 @@ export default function BoardPage() {
 
 
   return (
-    <div style={{ minHeight: '100vh', background: board?.background, position: 'relative' }}>
+    <div style={{
+      minHeight: '100vh',
+      background: board?.background,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+      position: 'relative',
+    }}>
       {/* Dark overlay on board background */}
       <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.35)', zIndex: 0, pointerEvents: 'none' }} />
 

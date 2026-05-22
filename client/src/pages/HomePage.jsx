@@ -96,6 +96,8 @@ function BoardThumbnail({ board, onClick, onDelete }) {
           width: '100%', paddingBottom: '62%',
           borderRadius: 10, position: 'relative', overflow: 'hidden',
           background: board.background,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           boxShadow: 'var(--shadow-sm)',
           transition: 'transform 0.15s, box-shadow 0.15s',
         }}
@@ -142,7 +144,7 @@ function BoardThumbnail({ board, onClick, onDelete }) {
 function CreateBoardModal({ template, onClose, onCreated }) {
   const [title, setTitle] = useState(template ? template.name : '');
   const [background, setBackground] = useState(
-    template ? template.background : BOARD_COLORS[0]
+    template ? template.background : 'url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80)'
   );
   const [creating, setCreating] = useState(false);
   const { addToast } = useToast();
@@ -155,6 +157,15 @@ function CreateBoardModal({ template, onClose, onCreated }) {
     'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
     'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
     'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+  ];
+
+  const BACKGROUND_PHOTOS = [
+    'url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80)',
+    'url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80)',
+    'url(https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop&q=80)',
+    'url(https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=800&auto=format&fit=crop&q=80)',
+    'url(https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&auto=format&fit=crop&q=80)',
+    'url(https://images.unsplash.com/photo-1433832597026-a501c107e5b1?w=800&auto=format&fit=crop&q=80)',
   ];
 
   async function handleCreate(e) {
@@ -184,6 +195,8 @@ function CreateBoardModal({ template, onClose, onCreated }) {
         {/* Preview header */}
         <div style={{
           height: 120, background: background,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           position: 'relative',
         }}>
@@ -232,8 +245,27 @@ function CreateBoardModal({ template, onClose, onCreated }) {
             BACKGROUND
           </label>
 
+          {/* Photo options */}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>PHOTOS</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+            {BACKGROUND_PHOTOS.map(p => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setBackground(p)}
+                style={{
+                  width: 54, height: 36, borderRadius: 6,
+                  background: p, backgroundSize: 'cover', backgroundPosition: 'center', border: 'none',
+                  cursor: 'pointer', outline: background === p ? '3px solid var(--brand-primary)' : 'none',
+                  outlineOffset: 2, transition: 'outline 0.1s',
+                }}
+              />
+            ))}
+          </div>
+
           {/* Gradient options */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>GRADIENTS</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
             {GRADIENTS.map(g => (
               <button
                 key={g}
@@ -248,6 +280,7 @@ function CreateBoardModal({ template, onClose, onCreated }) {
             ))}
           </div>
           {/* Solid colors */}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>COLORS</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 }}>
             {ALL_COLORS.map(c => (
               <button
