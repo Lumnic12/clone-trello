@@ -1,0 +1,325 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Variables ─────────────────────────────────────────────────── */
+:root {
+  /* Background layers */
+  --bg-primary: #f1f2f4;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #ebecf0;
+  --bg-card: #ffffff;
+  --bg-hover: #e9eaec;
+  --bg-input: #ffffff;
+  --bg-modal: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text */
+  --text-primary: #172b4d;
+  --text-secondary: #626f86;
+  --text-muted: #9ba6b6;
+  --text-inverse: #ffffff;
+  --text-link: #0079BF;
+
+  /* Borders */
+  --border-primary: #dfe1e6;
+  --border-secondary: #c1c7d0;
+  --border-focus: #0079BF;
+
+  /* Brand */
+  --brand-primary: #0079BF;
+  --brand-hover:   #026aa7;
+  --brand-light:   #e4f0f6;
+
+  /* Status */
+  --success: #36B37E;
+  --warning: #FF8B00;
+  --danger: #FF5630;
+  --info: #0065FF;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.16);
+  --shadow-card: 0 1px 3px rgba(9,30,66,.1), 0 0 0 1px rgba(9,30,66,.06);
+}
+
+.dark {
+  /* Background layers */
+  --bg-primary: #0f1117;
+  --bg-secondary: #1a1f2e;
+  --bg-tertiary: #222836;
+  --bg-card: #1e2433;
+  --bg-hover: #2a3141;
+  --bg-input: #2a3141;
+  --bg-modal: #1a1f2e;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Text */
+  --text-primary: #e8eaf0;
+  --text-secondary: #9ba6b6;
+  --text-muted: #6b7a96;
+  --text-inverse: #172b4d;
+  --text-link: #4c9aff;
+
+  /* Borders */
+  --border-primary: #2e3647;
+  --border-secondary: #3d4c65;
+  --border-focus: #4c9aff;
+
+  /* Brand */
+  --brand-primary: #4c9aff;
+  --brand-hover: #79b8ff;
+  --brand-light: #1c3461;
+
+  /* Status */
+  --success: #57d9a3;
+  --warning: #ffc400;
+  --danger: #ff7452;
+  --info: #4c9aff;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* ─── Base Styles ───────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  transition: color-scheme 0.2s ease;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Component Classes ─────────────────────────────────────────────── */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm cursor-pointer border-none transition-all duration-150 select-none;
+  }
+  .btn-primary {
+    background: var(--brand-primary);
+    color: white;
+  }
+  .btn-primary:hover {
+    background: var(--brand-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+  }
+  .btn-ghost:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+  }
+  .btn-danger {
+    background: var(--danger);
+    color: white;
+  }
+  .btn-danger:hover {
+    filter: brightness(1.1);
+  }
+
+  .card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-primary);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .input {
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(76, 154, 255, 0.15);
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(2px);
+    animation: fadeIn 0.15s ease;
+  }
+
+  .modal-box {
+    background: var(--bg-modal);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-primary);
+    animation: slideUp 0.2s ease;
+    max-height: 92vh;
+    position: relative;
+    /* Do NOT set overflow here — each modal manages its own scroll */
+  }
+
+  .list-column {
+    background: rgba(255, 255, 255, 0.93);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    min-width: 282px;
+    max-width: 282px;
+    max-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  }
+}
+
+/* ─── Animations ────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-fadeIn { animation: fadeIn 0.2s ease; }
+.animate-slideUp { animation: slideUp 0.2s ease; }
+.animate-slideDown { animation: slideDown 0.15s ease; }
+
+/* Board thumbnail hover reveals delete button */
+.board-thumbnail-wrap:hover .board-delete-btn { opacity: 1 !important; }
+
+/* ─── CSS Containment (performance) ────────────────────────────────── */
+/* Tells the browser each list is a self-contained layout box.
+   Prevents a card re-render from triggering a full-page reflow. */
+.list-column {
+  contain: layout style;
+}
+/* Dark mode: list column uses dark glass */
+.dark .list-column {
+  background: rgba(30, 36, 51, 0.88);
+  border-color: rgba(255,255,255,0.08);
+}
+
+/* Optimistic card loading pulse */
+.card-optimistic {
+  animation: pulse 1s ease infinite;
+  pointer-events: none;
+}
+
+/* ─── Responsive Design ─────────────────────────────────────────────── */
+/* Tablet: 768px – 1024px */
+@media (max-width: 1024px) {
+  .list-column {
+    min-width: 240px;
+    max-width: 240px;
+  }
+}
+
+/* Mobile: < 768px */
+@media (max-width: 768px) {
+  /* Navbar: hide non-essential items */
+  .nav-workspaces { display: none !important; }
+
+  /* Board content: horizontal scroll with snap */
+  .board-scroll {
+    padding: 12px !important;
+    gap: 10px !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .list-column {
+    min-width: 260px;
+    max-width: 280px;
+    scroll-snap-align: start;
+    max-height: calc(100vh - 100px);
+  }
+
+  /* Card modal: full screen on mobile */
+  .modal-box {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Home page: single column */
+  .home-sidebar { display: none !important; }
+  .home-main { padding: 16px !important; }
+  .board-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 480px) {
+  .board-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .list-column {
+    min-width: 88vw;
+    max-width: 92vw;
+  }
+}
+

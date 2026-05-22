@@ -1,0 +1,198 @@
+/* ── CARD TEMPLATES ─────────────────────────────────────────── */
+export const CARD_TEMPLATES = [
+  {
+    id: 'bug-report',
+    name: '🐛 Bug Report',
+    description: 'Track and resolve software bugs efficiently',
+    labelColor: '#FF5630',
+    labelName: 'Bug',
+    coverColor: '#FF5630',
+    data: {
+      title: 'Bug: [Short description]',
+      description: `## Bug Report\n\n**Environment:** Production / Staging / Development\n\n**Steps to Reproduce:**\n1. Go to...\n2. Click on...\n3. See error\n\n**Expected Behavior:**\nDescribe what should happen.\n\n**Actual Behavior:**\nDescribe what actually happens.\n\n**Screenshots:**\nAttach if applicable.`,
+      checklistItems: [
+        { text: 'Reproduce the bug consistently' },
+        { text: 'Identify root cause' },
+        { text: 'Write fix' },
+        { text: 'Write regression test' },
+        { text: 'Deploy and verify fix' },
+      ],
+    },
+  },
+  {
+    id: 'feature-request',
+    name: '✨ Feature Request',
+    description: 'Plan and implement new features',
+    labelColor: '#36B37E',
+    labelName: 'Feature',
+    coverColor: '#36B37E',
+    data: {
+      title: 'Feature: [Feature name]',
+      description: `## Feature Request\n\n**User Story:**\nAs a [user type], I want [functionality] so that [benefit].\n\n**Acceptance Criteria:**\n- [ ] Criterion 1\n- [ ] Criterion 2\n- [ ] Criterion 3\n\n**Design Notes:**\nAdd any design considerations here.`,
+      checklistItems: [
+        { text: 'Write user stories' },
+        { text: 'Design mockups approved' },
+        { text: 'Backend API implemented' },
+        { text: 'Frontend UI built' },
+        { text: 'Tests written' },
+        { text: 'Code reviewed and merged' },
+      ],
+    },
+  },
+  {
+    id: 'meeting-notes',
+    name: '📝 Meeting Notes',
+    description: 'Capture decisions and action items from meetings',
+    labelColor: '#0052CC',
+    labelName: 'Meeting',
+    coverColor: '#0052CC',
+    data: {
+      title: 'Meeting: [Topic] — [Date]',
+      description: `## Meeting Notes\n\n**Date:** \n**Attendees:** \n**Facilitator:** \n\n## Agenda\n1. Item 1\n2. Item 2\n\n## Decisions Made\n-\n\n## Next Meeting\nDate: `,
+      checklistItems: [
+        { text: 'Share meeting agenda beforehand' },
+        { text: 'Take notes during meeting' },
+        { text: 'Assign action items' },
+        { text: 'Send follow-up email' },
+        { text: 'Schedule next meeting' },
+      ],
+    },
+  },
+  {
+    id: 'sprint-planning',
+    name: '🚀 Sprint Planning',
+    description: 'Organize and plan your development sprints',
+    labelColor: '#6554C0',
+    labelName: 'Sprint',
+    coverColor: '#6554C0',
+    data: {
+      title: 'Sprint [#] — [Start] to [End]',
+      description: `## Sprint Planning\n\n**Sprint Goal:**\nDescribe the main goal of this sprint.\n\n**Capacity:** __ story points\n\n**Team Members:**\n- Developer 1\n- Developer 2\n\n**Definition of Done:**\n- Code reviewed\n- Tests passing\n- Deployed to staging`,
+      checklistItems: [
+        { text: 'Review and groom backlog' },
+        { text: 'Estimate story points' },
+        { text: 'Assign tasks to team members' },
+        { text: 'Set sprint goal' },
+        { text: 'Daily standups scheduled' },
+        { text: 'Sprint review/retro planned' },
+      ],
+    },
+  },
+  {
+    id: 'design-review',
+    name: '🎨 Design Review',
+    description: 'Structured design feedback and approval workflow',
+    labelColor: '#FF5BAC',
+    labelName: 'Design',
+    coverColor: '#FF5BAC',
+    data: {
+      title: 'Design Review: [Component/Page]',
+      description: `## Design Review\n\n**Designer:** \n**Stakeholders:** \n**Figma Link:** \n\n## Feedback Areas\n- Visual consistency\n- User experience\n- Accessibility\n- Mobile responsiveness\n\n## Status\n☐ Draft → ☐ Review → ☐ Approved`,
+      checklistItems: [
+        { text: 'Initial design shared with team' },
+        { text: 'Collect feedback from stakeholders' },
+        { text: 'Revisions made based on feedback' },
+        { text: 'Accessibility checked' },
+        { text: 'Mobile design reviewed' },
+        { text: 'Final approval obtained' },
+      ],
+    },
+  },
+  {
+    id: 'user-story',
+    name: '📖 User Story',
+    description: 'Define features from the user perspective',
+    labelColor: '#FF8B00',
+    labelName: 'Story',
+    coverColor: '#FF8B00',
+    data: {
+      title: 'Story: As a user I want to…',
+      description: `## User Story\n\n**As a** [type of user],\n**I want** [some goal],\n**So that** [some reason].\n\n## Acceptance Criteria\n- Given [context], when [action], then [outcome]\n- Given [context], when [action], then [outcome]\n\n**Story Points:** \n**Priority:** High / Medium / Low`,
+      checklistItems: [
+        { text: 'Story defined and estimated' },
+        { text: 'Acceptance criteria written' },
+        { text: 'Design available' },
+        { text: 'Implementation complete' },
+        { text: 'Acceptance criteria verified' },
+        { text: 'Product owner approved' },
+      ],
+    },
+  },
+];
+
+/* ── BOARD TEMPLATES ────────────────────────────────────────── */
+export const BOARD_TEMPLATES = [
+  {
+    id: 'scrum',
+    name: 'Scrum Board',
+    description: 'Agile sprint management with backlog, in-progress, review, and done columns',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    emoji: '🚀',
+    lists: ['Product Backlog', 'Sprint Backlog', 'In Progress', 'In Review', 'Done'],
+    category: 'Engineering',
+  },
+  {
+    id: 'kanban',
+    name: 'Kanban Board',
+    description: 'Visualize your workflow and limit work in progress',
+    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    emoji: '📋',
+    lists: ['To Do', 'In Progress', 'Testing', 'Done'],
+    category: 'Project Management',
+  },
+  {
+    id: 'content-calendar',
+    name: 'Content Calendar',
+    description: 'Plan, create, and publish your content strategy',
+    background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    emoji: '📅',
+    lists: ['Ideas', 'Writing', 'Editing', 'Scheduled', 'Published'],
+    category: 'Marketing',
+  },
+  {
+    id: 'product-roadmap',
+    name: 'Product Roadmap',
+    description: 'Map your product vision and feature releases',
+    background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    emoji: '🗺️',
+    lists: ['Future', 'Q1', 'Q2', 'Q3', 'Q4', 'Shipped'],
+    category: 'Product',
+  },
+  {
+    id: 'bug-tracker',
+    name: 'Bug Tracker',
+    description: 'Track, prioritize, and squash bugs systematically',
+    background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    emoji: '🐛',
+    lists: ['Reported', 'Confirmed', 'In Fix', 'Testing', 'Resolved'],
+    category: 'Engineering',
+  },
+  {
+    id: 'hiring',
+    name: 'Hiring Pipeline',
+    description: 'Manage candidates through your recruitment process',
+    background: 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+    emoji: '👥',
+    lists: ['Applied', 'Screening', 'Interview', 'Offer', 'Hired', 'Rejected'],
+    category: 'HR',
+  },
+];
+
+/* ── CARD COVER IMAGES ─────────────────────────────────────── */
+export const COVER_IMAGES = [
+  '/covers/cover1.png',
+  '/covers/cover2.png',
+  '/covers/cover3.png',
+  '/covers/cover4.png',
+];
+
+export const COVER_GRADIENTS = [
+  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+  'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+  'linear-gradient(135deg, #2af598 0%, #009efd 100%)',
+];

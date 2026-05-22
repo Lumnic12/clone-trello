@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Board {
+  id         String   @id @default(uuid())
+  title      String
+  background String   @default("#0079BF")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  lists      List[]
+  members    Member[] @relation("BoardMembers")
+}
+
+model List {
+  id        String   @id @default(uuid())
+  title     String
+  position  Float
+  boardId   String
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  cards     Card[]
+
+  @@index([boardId])
+}
+
+model Card {
+  id           String          @id @default(uuid())
+  title        String
+  description  String?
+  position     Float
+  listId       String
+  list         List            @relation(fields: [listId], references: [id], onDelete: Cascade)
+  dueDate      DateTime?
+  archived     Boolean         @default(false)
+  coverColor   String?
+  coverImage   String?
+  labels       Label[]
+  checklistItems ChecklistItem[]
+  members      CardMember[]
+  comments     Comment[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([listId])
+  @@index([archived])
+}
+
+model Label {
+  id     String @id @default(uuid())
+  name   String
+  color  String
+  cardId String
+  card   Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+model ChecklistItem {
+  id        String  @id @default(uuid())
+  text      String
+  completed Boolean @default(false)
+  cardId    String
+  card      Card    @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+model Member {
+  id          String       @id @default(uuid())
+  name        String
+  email       String       @unique
+  avatarColor String       @default("#0079BF")
+  cards       CardMember[]
+  comments    Comment[]
+  boards      Board[]      @relation("BoardMembers")
+}
+
+model CardMember {
+  cardId   String
+  memberId String
+  card     Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@id([cardId, memberId])
+  @@index([cardId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  cardId    String
+  memberId  String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([cardId])
+}
