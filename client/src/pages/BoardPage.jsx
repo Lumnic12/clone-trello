@@ -10,6 +10,7 @@ import {
 import { getBoardById, updateBoard, reorderLists, reorderCards, moveCard } from '../api/api';
 import { useToast } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
+import { getPremiumBackground } from '../utils/colorHelpers';
 import List from '../components/List/List';
 import AddListForm from '../components/List/AddListForm';
 import CardPreview from '../components/Card/CardPreview';
@@ -187,7 +188,7 @@ export default function BoardPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: board?.background,
+      background: getPremiumBackground(board?.background),
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',

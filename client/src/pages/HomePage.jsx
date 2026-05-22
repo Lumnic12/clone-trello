@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getBoards, createBoard, deleteBoard, createList } from '../api/api';
-import { BOARD_COLORS } from '../utils/colorHelpers';
+import { BOARD_COLORS, getPremiumBackground } from '../utils/colorHelpers';
 import { BOARD_TEMPLATES } from '../utils/templates';
 import { useToast } from '../context/ToastContext';
 
@@ -92,10 +92,11 @@ function BoardThumbnail({ board, onClick, onDelete }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}>
       <div
         onClick={onClick}
+        className="board-thumbnail"
         style={{
           width: '100%', paddingBottom: '62%',
           borderRadius: 10, position: 'relative', overflow: 'hidden',
-          background: board.background,
+          background: getPremiumBackground(board.background),
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           boxShadow: 'var(--shadow-sm)',
@@ -194,7 +195,7 @@ function CreateBoardModal({ template, onClose, onCreated }) {
       <div className="modal-box" style={{ width: 420, padding: 0, overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
         {/* Preview header */}
         <div style={{
-          height: 120, background: background,
+          height: 120, background: getPremiumBackground(background),
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           display: 'flex', alignItems: 'center', justifyContent: 'center',

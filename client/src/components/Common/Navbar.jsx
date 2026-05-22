@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { createBoard } from '../../api/api';
-import { BOARD_COLORS } from '../../utils/colorHelpers';
+import { BOARD_COLORS, getPremiumBackground } from '../../utils/colorHelpers';
 import { useToast } from '../../context/ToastContext';
 import { useClickOutside } from '../../hooks/useClickOutside';
 
@@ -43,7 +43,7 @@ function QuickCreateModal({ onClose }) {
       width: 320, zIndex: 200, animation: 'slideDown 0.15s ease',
       overflow: 'hidden',
     }} ref={ref}>
-      <div style={{ height: 80, background: bg, position: 'relative' }}>
+      <div style={{ height: 80, background: getPremiumBackground(bg), backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.3))' }} />
         <div style={{ position: 'absolute', bottom: 8, left: 12, color: 'white', fontWeight: 700, fontSize: 16 }}>
           {title || 'Board name'}
