@@ -83,21 +83,7 @@ npm run dev
 
 ## Deployment
 
-### Backend → Railway (recommended, free tier)
-
-1. Push code to GitHub
-2. Go to [railway.app](https://railway.app) → New Project → Deploy from GitHub
-3. Select the `server/` folder (or set root directory to `server`)
-4. Add environment variables:
-   ```
-   DATABASE_URL = <your Neon connection string>
-   NODE_ENV = production
-   PORT = 5000
-   ```
-5. Railway auto-detects the `Dockerfile` and builds it
-6. Copy the generated Railway URL (e.g., `https://trello-clone-xxx.up.railway.app`)
-
-### Backend → Render (alternative)
+### Backend → Render
 
 1. New Web Service → Connect repo → Select `server/` as root
 2. Build Command: `npm install && npx prisma generate`
@@ -122,16 +108,6 @@ npm run dev
    VITE_API_URL = https://YOUR_RAILWAY_URL/api
    ```
 
-### Frontend → Netlify (alternative)
-
-1. Go to [netlify.com](https://netlify.com) → New site from Git
-2. Build command: `npm run build`
-3. Publish directory: `dist`
-4. Add env variable: `VITE_API_URL = https://YOUR_BACKEND/api`
-5. Add `client/public/_redirects`:
-   ```
-   /*  /index.html  200
-   ```
 
 ---
 
