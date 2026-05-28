@@ -38,5 +38,5 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
   CMD wget -qO- http://localhost:5000/api/health || exit 1
 
-# Run
-CMD ["node", "index.js"]
+# Run migrations then start the server
+CMD ["sh", "-c", "npx prisma migrate deploy && node index.js"]
